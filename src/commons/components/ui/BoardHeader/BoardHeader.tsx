@@ -1,14 +1,17 @@
 import { HStack, IconButton, Text, useColorModeValue } from "@chakra-ui/react";
-import { ILetter } from "commons/types";
 import { FC } from "react";
 import { IconQuestionMark, IconChartBar } from "@tabler/icons-react";
 import { ColorModeSwitcher } from "commons/components/forms/ColorThemeSwitch";
 
 export interface BoardHeaderProps {
-  words?: ILetter[];
+  onInstructionsOpen: () => void;
+  onStatsOpen: () => void;
 }
 
-export const BoardHeader: FC<BoardHeaderProps> = ({ words }) => {
+export const BoardHeader: FC<BoardHeaderProps> = ({
+  onInstructionsOpen,
+  onStatsOpen,
+}) => {
   const bg = useColorModeValue("gray.300", "gray.600");
 
   return (
@@ -23,6 +26,7 @@ export const BoardHeader: FC<BoardHeaderProps> = ({ words }) => {
       <IconButton
         rounded="full"
         aria-label="ask"
+        onClick={onInstructionsOpen}
         icon={<IconQuestionMark size={20} color="black" />}
       />
 
@@ -33,6 +37,7 @@ export const BoardHeader: FC<BoardHeaderProps> = ({ words }) => {
         <IconButton
           rounded="full"
           aria-label="ask"
+          onClick={onStatsOpen}
           icon={<IconChartBar size={20} color="black" />}
         />
         <ColorModeSwitcher />

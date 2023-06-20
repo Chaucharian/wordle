@@ -69,7 +69,6 @@ export const Keyboard: FC<IKeyboardProps> = ({
     <VStack
       w="638px"
       bg={bg}
-      opacity="30%"
       h="200px"
       borderRadius="xl"
       p={3}

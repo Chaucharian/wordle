@@ -18,7 +18,7 @@ export const Letter: FC<ILetterProps> = ({
     const bg = {
       contains: "yellow.300",
       perfect: "green.600",
-      none: "gray.900",
+      none: "gray.500",
       initial: "gray.400",
     };
     const text = {

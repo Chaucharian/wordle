@@ -4,8 +4,11 @@ import { IUserSession } from "./UserSession";
 export interface IGameState {
   letters: ILetter[] | [];
   session: IUserSession | null;
-  nextWordTime: number;
+  nextWordTime: string;
   isLoading: boolean;
   pause: boolean;
-  isFirstTime: true;
+  secretWord: string;
+  userWon: boolean;
+  gameOver: boolean;
+  isFirstTime: boolean;
 }

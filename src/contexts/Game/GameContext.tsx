@@ -1,61 +1,83 @@
-import { GET_WORDS_URL, getWordsApi } from "@api*";
-import { useQuery } from "@tanstack/react-query";
 import { AccuracyLevel, ILetter } from "commons/types";
 import { IGameState } from "commons/types/GameState";
-import React, {
+import {
   createContext,
   useState,
   useContext,
   useMemo,
   useCallback,
+  useEffect,
 } from "react";
 import { useSecrectWord } from "./hooks/useSecretWord";
 import { useSubmitWord } from "./hooks/useSubmitWord";
-import { v4 } from "uuid";
+import { useSession } from "./hooks/useSession";
+import { IGameActions } from "commons/types/GameActions";
+
+const NEXT_WORD_INTERVAL = 1000 * 60 * 5;
 
 const initialGameState: IGameState = {
   letters: [],
   session: null,
   isLoading: true,
+  secretWord: "",
+  userWon: false,
+  gameOver: false,
   isFirstTime: true,
-  nextWordTime: 1000 * 60 * 5,
+  nextWordTime: "",
   pause: false,
 };
 
 const GameContext = createContext<IGameState>(initialGameState);
-const GameActionsContext = createContext<any>({});
+const GameActionsContext = createContext<IGameActions>({
+  changeFirstTimeState: () => {},
+  writeLetter: () => {},
+  removeLetter: () => {},
+  submitGuess: () => {},
+  reset: () => {},
+});
 
 export const GameProvider = ({ children }: any) => {
-  const { isLoading, secretWord } = useSecrectWord({});
+  const {
+    changeFirstTimeState,
+    changeSession,
+    session,
+    isFirstTime,
+    isLoading: isSessionLoading,
+  } = useSession();
+  const {
+    isLoading: isLoadingSecretWord,
+    secretWord,
+    nextWordTime,
+    nextWordTimeMilli,
+    reset: resetSecretWord,
+  } = useSecrectWord({ nextWordDefaultTime: NEXT_WORD_INTERVAL });
   const [letters, setLetters] = useState<ILetter[]>([]);
+  const [gameOver, setGameOver] = useState(false);
+  const [userWon, setUserWon] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const rowIndex = attempts * letters.length - 5;
   const wordAttempt = useMemo(
     () => [...letters].slice(attempts >= 1 ? attempts * 5 : 0, letters.length),
-    [letters, rowIndex, attempts]
+    [letters, attempts]
   );
   const {
     isSubmitEnabled,
     lastWord,
     reset: resetSubmit,
   } = useSubmitWord({ letters: wordAttempt });
-  const [guess, setGuess] = useState("");
+  const isLoading = useMemo(
+    () => isLoadingSecretWord || isSessionLoading,
+    [isLoadingSecretWord, isSessionLoading]
+  );
 
-  const [feedback, setFeedback] = useState("");
-
-  console.log("ATTEMPT ", {
-    wordAttempt,
-    attempts,
-    rowIndex,
+  console.log("GAME STATE  ", {
     secretWord,
-    letters,
   });
 
   const writeLetter = useCallback(
     (letter: ILetter) => {
       if (!isSubmitEnabled) {
         const newLetters = [...letters];
-        newLetters.push({ ...letter, id: v4() });
+        newLetters.push(letter);
         setLetters(newLetters);
       }
     },
@@ -67,6 +89,14 @@ export const GameProvider = ({ children }: any) => {
     newLetters.pop();
     setLetters(newLetters);
   }, [setLetters, letters]);
+
+  const reset = useCallback(() => {
+    setLetters([]);
+    setGameOver(false);
+    setUserWon(false);
+    setAttempts(0);
+    resetSecretWord();
+  }, [setLetters, resetSecretWord, setAttempts, setUserWon, setGameOver]);
 
   const changeWordState = useCallback(
     (word: ILetter[]) => {
@@ -84,7 +114,7 @@ export const GameProvider = ({ children }: any) => {
 
       setLetters(newLetters);
     },
-    [letters, setLetters, wordAttempt]
+    [letters, setLetters]
   );
 
   const submitGuess = useCallback(() => {
@@ -99,6 +129,12 @@ export const GameProvider = ({ children }: any) => {
           })
         );
         changeWordState(matchingChars);
+        setAttempts((prevAttempts) => prevAttempts + 1);
+        changeSession({
+          played: session.played + 1,
+          victories: session.victories + 1,
+        });
+        setUserWon(true);
       } else {
         for (let i = 0; i < secretWord.length; i++) {
           const secreWordLetter = secretWord[i];
@@ -122,41 +158,69 @@ export const GameProvider = ({ children }: any) => {
         }
         changeWordState(matchingChars);
         resetSubmit();
-        setFeedback(matchingChars.join(""));
         setAttempts((prevAttempts) => prevAttempts + 1);
+        // BOARD FULL
+        if (letters.length === 25) {
+          changeSession({
+            played: session.played + 1,
+            victories: session.victories,
+          });
+          setGameOver(true);
+        }
       }
-      setGuess("");
     }
-  }, [changeWordState, isSubmitEnabled, lastWord, secretWord, resetSubmit]);
+  }, [
+    changeWordState,
+    changeSession,
+    letters,
+    session,
+    isSubmitEnabled,
+    lastWord,
+    secretWord,
+    resetSubmit,
+  ]);
+
+  // IF TIME LIMIT REACHED
+  useEffect(() => {
+    if (nextWordTimeMilli === 0) {
+      reset();
+      resetSecretWord();
+    }
+  }, [nextWordTimeMilli, reset, resetSecretWord]);
 
   const value = useMemo(
     () => ({
       ...initialGameState,
+      nextWordTime,
+      secretWord,
+      gameOver,
+      userWon,
+      session,
+      isFirstTime,
       letters,
       isLoading,
     }),
-    [isLoading, letters]
+    [
+      nextWordTime,
+      secretWord,
+      gameOver,
+      userWon,
+      session,
+      isFirstTime,
+      letters,
+      isLoading,
+    ]
   );
 
   const actions = useMemo(
     () => ({
-      secretWord,
-      guess,
-      attempts,
-      feedback,
+      reset,
+      changeFirstTimeState,
       writeLetter,
       removeLetter,
       submitGuess,
     }),
-    [
-      removeLetter,
-      writeLetter,
-      secretWord,
-      guess,
-      attempts,
-      feedback,
-      submitGuess,
-    ]
+    [changeFirstTimeState, removeLetter, writeLetter, submitGuess, reset]
   );
 
   return (
