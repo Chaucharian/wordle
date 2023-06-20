@@ -1,8 +1,11 @@
 {
-  "name": "my-app",
+  "name": "wordle",
   "version": "0.1.0",
   "private": true,
   "proxy": "https://gitlab.com/",
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "@chakra-ui/react": "^2.7.1",
     "@craco/craco": "^7.1.0",
