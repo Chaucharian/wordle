@@ -20,6 +20,7 @@
       "@commons*": ["commons/index.ts"],
       "@contexts*": ["contexts/index.ts"],
       "@theme*": ["theme/index.ts"],
+      "@api*": ["api/index.ts"],
       "@screens*": ["screens/index.ts"]
     }
   },

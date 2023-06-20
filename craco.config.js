@@ -8,6 +8,7 @@ module.exports = {
       "@contexts": path.resolve(__dirname, "src/contexts"),
       "@screens": path.resolve(__dirname, "src/screens"),
       "@theme": path.resolve(__dirname, "src/theme"),
+      "@api": path.resolve(__dirname, "src/api"),
     },
   },
 };

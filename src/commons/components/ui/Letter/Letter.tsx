@@ -2,12 +2,18 @@ import { Button, ButtonProps, Text } from "@chakra-ui/react";
 import { ILetter } from "commons/types";
 import { FC, useMemo } from "react";
 
-export interface ILetterProps extends ButtonProps {
+export interface ILetterProps extends Omit<ButtonProps, "onClick"> {
   size?: "sm" | "md";
   letter: ILetter;
+  onClick?: (letter: ILetter) => void;
 }
 
-export const Letter: FC<ILetterProps> = ({ size = "sm", letter, ...rest }) => {
+export const Letter: FC<ILetterProps> = ({
+  size = "sm",
+  letter,
+  onClick = () => {},
+  ...rest
+}) => {
   const colors = useMemo(() => {
     const bg = {
       contains: "yellow.300",
@@ -27,8 +33,9 @@ export const Letter: FC<ILetterProps> = ({ size = "sm", letter, ...rest }) => {
     <Button
       bgColor={colors.bg}
       borderRadius="md"
-      py={size === "sm" ? 1.2 : 1.5}
-      px={size === "sm" ? 1.5 : 2.5}
+      py={size === "sm" ? 1.2 : 9}
+      px={size === "sm" ? 1.5 : 4}
+      onClick={() => onClick(letter)}
       {...rest}
     >
       <Text color={colors.text} fontSize={size === "sm" ? "18px" : "35px"}>
