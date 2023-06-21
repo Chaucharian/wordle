@@ -8,10 +8,8 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { useSecrectWord } from "./hooks/useSecretWord";
-import { useSubmitWord } from "./hooks/useSubmitWord";
-import { useSession } from "./hooks/useSession";
 import { IGameActions } from "commons/types/GameActions";
+import { useSession, useSecrectWord, useSubmitWord } from "commons/hooks";
 
 const NEXT_WORD_INTERVAL = 1000 * 60 * 5;
 

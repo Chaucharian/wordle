@@ -4,7 +4,7 @@ export const GET_WORDS_URL = "/words.txt";
 
 export type IGetWordsResponse = string;
 
-export const getWordsApi = async ({}: any) => {
+export const getWordsApi = async () => {
   const { data } = await networkClient.get<IGetWordsResponse>(GET_WORDS_URL);
   return data;
 };

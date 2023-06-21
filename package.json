@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "https://gitlab.com/",
   "engines": {
-    "node": "16.x"
+    "node": ">16.x"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.7.1",

@@ -1,7 +1,6 @@
 import {
   VStack,
   Heading,
-  Button,
   ModalBody,
   ModalContent,
   ModalHeader,
@@ -10,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { IModalProps } from "commons/types/Modal";
 import { IUserSession } from "commons/types/UserSession";
+import { ActionButton } from "commons/components/forms";
 
 export interface StatsModalPayload {
   session: IUserSession;
@@ -52,17 +52,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ payload }) => {
             <Text fontWeight="bold">{nextWordTime}</Text>
           </VStack>
 
-          <Button
-            width="264px"
-            height="50px"
-            bgColor="green.300"
-            color="white"
-            fontWeight="extrabold"
-            fontSize="28px"
-            onClick={onSubmit}
-          >
-            ACEPTAR
-          </Button>
+          <ActionButton onClick={onSubmit}>ACEPTAR</ActionButton>
         </VStack>
       </ModalBody>
     </ModalContent>

@@ -1,7 +1,6 @@
 import {
   VStack,
   Heading,
-  Button,
   ModalBody,
   ModalContent,
   ModalHeader,
@@ -11,6 +10,7 @@ import {
 import { IModalProps } from "commons/types/Modal";
 import { Letter } from "commons/components/ui";
 import { AccuracyLevel } from "commons/types";
+import { ActionButton } from "commons/components/forms";
 
 export interface InstructionsModalProps extends IModalProps {}
 
@@ -95,17 +95,7 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({
           </VStack>
 
           <Text>¡Una palabra nueva cada 5 minutos!</Text>
-          <Button
-            width="264px"
-            height="50px"
-            bgColor="green.300"
-            color="white"
-            fontWeight="extrabold"
-            fontSize="28px"
-            onClick={onSubmit}
-          >
-            JUGAR!
-          </Button>
+          <ActionButton onClick={onSubmit}>JUGAR!</ActionButton>
         </VStack>
       </ModalBody>
     </ModalContent>

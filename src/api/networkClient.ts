@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const networkClient = axios.create({
-  baseURL: "/d2945/words/-/raw/main",
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
